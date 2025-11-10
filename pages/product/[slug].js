@@ -1,7 +1,9 @@
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import { useState } from 'react';
-export default function ProductPage({product}){
+import Header from '../../components/Header';
+
+export default function ProductPage({ product }) {
   const router = useRouter();
   if (router.isFallback) return <div>Loading...</div>;
   function addToCart(){
@@ -29,17 +31,54 @@ export default function ProductPage({product}){
     </div>
   );
 }
-export async function getStaticPaths(){
-  // fetch slugs
-  const res = await fetch(process.env.NEXT_PUBLIC_SITE_URL ? `${process.env.NEXT_PUBLIC_SITE_URL}/api/products` : 'http://localhost:3000/api/products');
-  const products = await res.json().catch(()=>[]);
-  const paths = products.map(p=>({ params: { slug: p.slug } }));
-  return { paths, fallback: true };
+export async function getStaticPaths() {
+  const connectDB = (await import('../../lib/db')).default;
+  const Product = (await import('../../models/Product')).default;
+  
+  try {
+    await connectDB();
+    const products = await Product.find({}, 'slug');
+    const paths = products.map(product => ({
+      params: { slug: product.slug }
+    }));
+    
+    return {
+      paths,
+      fallback: true
+    };
+  } catch (error) {
+    console.error('Error in getStaticPaths:', error);
+    return {
+      paths: [],
+      fallback: true
+    };
+  }
 }
-export async function getStaticProps({ params }){
-  const res = await fetch(process.env.NEXT_PUBLIC_SITE_URL ? `${process.env.NEXT_PUBLIC_SITE_URL}/api/products` : 'http://localhost:3000/api/products');
-  const products = await res.json().catch(()=>[]);
-  const product = products.find(p=>p.slug===params.slug) || null;
-  if(!product) return { notFound: true };
-  return { props: { product }, revalidate: 60 };
+
+export async function getStaticProps({ params }) {
+  const connectDB = (await import('../../lib/db')).default;
+  const Product = (await import('../../models/Product')).default;
+  
+  try {
+    await connectDB();
+    const product = await Product.findOne({ slug: params.slug });
+    
+    if (!product) {
+      return {
+        notFound: true
+      };
+    }
+
+    return {
+      props: {
+        product: JSON.parse(JSON.stringify(product))
+      },
+      revalidate: 60
+    };
+  } catch (error) {
+    console.error('Error in getStaticProps:', error);
+    return {
+      notFound: true
+    };
+  }
 }
