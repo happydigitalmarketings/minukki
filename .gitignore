@@ -1,5 +1,5 @@
 # dependencies
-node_modules/
+/node_modules
 /.pnp
 .pnp.js
 
@@ -7,10 +7,13 @@ node_modules/
 /coverage
 
 # next.js
-.next/
+/.next/
 /out/
 /build
-dist/
+/dist
+
+# production
+/build
 
 # misc
 .DS_Store
@@ -38,3 +41,18 @@ next-env.d.ts
 # IDE
 .vscode/
 .idea/
+
+# Large media files
+*.mp4
+*.tiff
+*.avi
+*.flv
+*.mov
+*.wmv
+
+# Compiled binaries
+*.exe
+*.dll
+*.so
+*.dylib
+*.node
