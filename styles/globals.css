@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body, #__next { height: 100%; }
+body { @apply bg-gray-50 text-gray-800; }
+
+/* Global Color Scheme */
+@layer components {
+  .text-primary { @apply text-[#8B4513]; }
+  .bg-primary { @apply bg-[#8B4513]; }
+  .hover:bg-primary-dark { @apply hover:bg-[#703810]; }
+  .border-primary { @apply border-[#8B4513]; }
+  .ring-primary { @apply ring-[#8B4513]; }
+  .btn-primary {
+    @apply bg-[#8B4513] text-white hover:bg-[#703810] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#8B4513];
+  }
+  .btn-secondary {
+    @apply bg-white text-[#8B4513] border border-[#8B4513] hover:bg-[#8B4513]/10 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#8B4513];
+  }
+  .link-primary {
+    @apply text-[#8B4513] hover:text-[#703810] cursor-pointer;
+  }
+}
+
+/* React Quill Editor Styles */
+@import '~react-quill/dist/quill.snow.css';
+
+.ql-container {
+  @apply min-h-[200px];
+}
+
+.ql-editor {
+  @apply min-h-[200px] prose max-w-none;
+}
+
+.ql-toolbar {
+  @apply sticky top-0 z-10 bg-white border-gray-300;
+}
