@@ -2,14 +2,17 @@
 const connectDB = require('../../../lib/db').default;
 const Product = require('../../../models/Product').default;
 const { getUserFromReq } = require('../_utils');
+const mongoose = require('mongoose');
 
 const handler = async (req, res) => {
   await connectDB();
   const { slug } = req.query;
+  // allow either slug or Mongo ObjectId in the route param
+  const query = mongoose.Types.ObjectId.isValid(slug) ? { _id: slug } : { slug };
 
   if (req.method === 'GET') {
-    const product = await Product.findOne({ slug });
-    if (!product) return res.status(404).end();
+    const product = await Product.findOne(query);
+    if (!product) return res.status(404).json({ message: 'Product not found' });
     res.json(product);
     return;
   }
@@ -18,13 +21,15 @@ const handler = async (req, res) => {
   if (!user || user.role !== 'admin') return res.status(401).json({ message: 'Unauthorized' });
 
   if (req.method === 'PUT') {
-    const updated = await Product.findOneAndUpdate({ slug }, req.body, { new: true });
+    const updated = await Product.findOneAndUpdate(query, req.body, { new: true });
+    if (!updated) return res.status(404).json({ message: 'Product not found' });
     res.json(updated);
     return;
   }
 
   if (req.method === 'DELETE') {
-    await Product.findOneAndDelete({ slug });
+    const deleted = await Product.findOneAndDelete(query);
+    if (!deleted) return res.status(404).json({ message: 'Product not found' });
     res.json({ success: true });
     return;
   }
