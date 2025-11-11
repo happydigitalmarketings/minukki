@@ -35,7 +35,7 @@ export default function AdminLayout({ children, user }) {
             {/* Admin Profile */}
             <div className="flex items-center">
               <div className="flex items-center">
-                <span className="text-gray-700 mr-4">Welcome, {user?.name}</span>
+                <span className="text-gray-700 mr-4">Welcome, {typeof user?.name === 'string' ? user.name : (user?.name?.name || '')}</span>
                 <button 
                   onClick={() => {
                     document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT';

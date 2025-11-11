@@ -4,13 +4,14 @@ import AdminLayout from '../../components/AdminLayout';
 import { verifyToken } from '../../lib/auth';
 
 export default function AdminBlog({ user }) {
+  const safeUserName = typeof user?.name === 'string' ? user.name : (user?.name?.name || '');
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState({
     title: '',
     content: '',
     image: '',
-    author: user?.name || '',
+    author: safeUserName,
   });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -46,7 +47,7 @@ export default function AdminBlog({ user }) {
 
       if (response.ok) {
         setSuccess('Blog post created successfully!');
-        setFormData({ title: '', content: '', image: '', author: user?.name || '' });
+  setFormData({ title: '', content: '', image: '', author: safeUserName });
         fetchPosts();
       } else {
         const data = await response.json();
@@ -307,23 +308,13 @@ export default function AdminBlog({ user }) {
 }
 
 export async function getServerSideProps({ req }) {
-  try {
-    const user = await verifyToken(req);
-    if (!user || !user.isAdmin) {
-      return {
-        redirect: {
-          destination: '/admin/login',
-          permanent: false,
-        },
-      };
-    }
-    return { props: { user } };
-  } catch (err) {
-    return {
-      redirect: {
-        destination: '/admin/login',
-        permanent: false,
-      },
-    };
+  const cookies = req.headers.cookie || '';
+  const token = cookies.split('token=')[1] ? cookies.split('token=')[1].split(';')[0] : null;
+  const user = token ? await verifyToken(token) : null;
+  if (!user || user.role !== 'admin') {
+    return { redirect: { destination: '/admin/login', permanent: false } };
   }
+  // Defensive: ensure user.name is always a string
+  const safeName = typeof user.name === 'string' ? user.name : (user.name?.name || '');
+  return { props: { user: { name: safeName, email: user.email } } };
 }

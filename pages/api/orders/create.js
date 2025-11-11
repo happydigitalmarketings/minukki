@@ -11,11 +11,15 @@ export default async function handler(req, res) {
       return res.status(405).json({ message: 'Method not allowed' });
     }
 
-    const { items, shippingAddress, total, paymentMethod } = req.body;
 
-    // Validate required fields
+    // Accept both 'shippingAddress' and 'customer' for compatibility
+    let { items, shippingAddress, customer, total, paymentMethod } = req.body;
     if (!items?.length) {
       return res.status(400).json({ message: 'Items are required' });
+    }
+    // Use customer as shippingAddress if shippingAddress is not provided
+    if (!shippingAddress && customer) {
+      shippingAddress = customer;
     }
     if (!shippingAddress) {
       return res.status(400).json({ message: 'Shipping address is required' });
@@ -41,8 +45,8 @@ export default async function handler(req, res) {
       status: 'pending'
     });
 
-    // Return the order ID
-    res.status(201).json({ orderId: order._id });
+  // Return the order ID and success flag
+  res.status(201).json({ success: true, orderId: order._id });
   } catch (error) {
     console.error('Order creation error:', error);
     res.status(500).json({ message: 'Error creating order' });

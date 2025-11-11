@@ -24,9 +24,10 @@ export default function AdminOrders({ user }) {
 
   const filteredOrders = orders.filter(order => {
     const matchesFilter = filter === 'all' || order.status === filter;
+    const customerName = order.shippingAddress?.name || ((order.shippingAddress?.firstName || '') + ' ' + (order.shippingAddress?.lastName || '')).trim();
     const matchesSearch = 
       order._id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (order.shippingAddress?.name || '').toLowerCase().includes(searchTerm.toLowerCase());
+      customerName.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesFilter && matchesSearch;
   });
 
@@ -134,10 +135,22 @@ export default function AdminOrders({ user }) {
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                       #{(order._id || '').slice(-6).toUpperCase()}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {order.shippingAddress?.name || 'N/A'}
-                      <div className="text-xs text-gray-400">
-                        {order.shippingAddress?.email || 'No email'}
+                    <td className="px-6 py-4 text-sm text-gray-500">
+                      <div className="font-medium">{(order.shippingAddress?.name || ((order.shippingAddress?.firstName || '') + ' ' + (order.shippingAddress?.lastName || '')).trim()) || 'N/A'}</div>
+                      <div className="text-xs text-gray-600 mt-1">
+                        <span className="font-semibold">Email:</span> {order.shippingAddress?.email || 'N/A'}
+                      </div>
+                      <div className="text-xs text-gray-600">
+                        <span className="font-semibold">Phone:</span> {order.shippingAddress?.phone || 'N/A'}
+                      </div>
+                      <div className="text-xs text-gray-600">
+                        <span className="font-semibold">Address:</span> {order.shippingAddress?.address || 'N/A'}
+                      </div>
+                      <div className="text-xs text-gray-600">
+                        <span className="font-semibold">City:</span> {order.shippingAddress?.city || 'N/A'} {order.shippingAddress?.state ? `(${order.shippingAddress.state})` : ''}
+                      </div>
+                      <div className="text-xs text-gray-600">
+                        <span className="font-semibold">PIN:</span> {order.shippingAddress?.pin || 'N/A'}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
