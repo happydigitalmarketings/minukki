@@ -2,10 +2,34 @@ import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 
 export default function Banner() {
-  const images = [
-    '/images/onam-banner.jpg',
-    '/images/banner-1.svg',
-    '/images/banner-2.svg',
+  const slides = [
+    {
+      image: '/images/banner-2.jpg',
+      titleTop: 'Buy 2',
+      titleBottom: ' GET 1 FREE',
+      description:
+        'UP TO 50 % OFF FOR NEW USERS',
+      cta: 'Explore Collection',
+      href: '/products',
+    },
+    {
+      image: '/images/banner-3.jpg',
+      titleTop: 'Handloom',
+      titleBottom: 'Craftsmanship',
+      description:
+        'Celebrate the fine handloom weaves — curated sarees with timeless beauty and artisanal detail.',
+      cta: 'Shop Handloom',
+      href: '/products',
+    }
+    // {
+    //   image: '/images/banner-3.jpg',
+    //   titleTop: 'Silk Kasavu',
+    //   titleBottom: 'Radiance',
+    //   description:
+    //     'Luxurious silk kasavu sarees with a luminous finish — perfect for celebrations and special moments.',
+    //   cta: 'Shop Silk',
+    //   href: '/products',
+    // },
   ];
 
   const [index, setIndex] = useState(0);
@@ -15,7 +39,7 @@ export default function Banner() {
   useEffect(() => {
     resetTimeout();
     timeoutRef.current = setTimeout(() => {
-      setIndex((prev) => (prev + 1) % images.length);
+      setIndex((prev) => (prev + 1) % slides.length);
     }, delay);
     return () => resetTimeout();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -28,7 +52,7 @@ export default function Banner() {
   }
 
   function goTo(i) {
-    setIndex(i % images.length);
+    setIndex(i % slides.length);
   }
 
   return (
@@ -40,33 +64,32 @@ export default function Banner() {
               className="flex transition-transform duration-700 w-full h-full"
               style={{ transform: `translateX(-${index * 100}%)` }}
             >
-              {images.map((src, i) => (
+              {slides.map((s, i) => (
                 <div
-                  key={src + i}
+                  key={s.image + i}
                   className="w-full h-full flex-shrink-0 flex flex-col md:flex-row items-center justify-between bg-[#FFF8E7]"
                 >
                   {/* Text block */}
                   <div className="md:w-1/2 w-full px-6 md:px-12 text-center md:text-left">
                     <h1 className="text-4xl md:text-6xl font-serif text-[#8B4513] mb-4">
-                      Traditional Kerala
+                      {s.titleTop}
                       <br />
-                      <span className="text-[#654321]">Elegance</span>
+                      <span className="text-[#654321]">{s.titleBottom}</span>
                     </h1>
                     <p className="text-base md:text-lg text-[#8B4513] mb-6 max-w-md mx-auto md:mx-0">
-                      Discover our handpicked collection of authentic Kerala sarees,
-                      where tradition meets contemporary elegance.
+                      {s.description}
                     </p>
                     <Link
-                      href="/products"
+                      href={s.href}
                       className="inline-block px-8 py-3 bg-[#8B4513] text-white rounded-full hover:bg-[#703810] transition-colors font-medium"
                     >
-                      Explore Collection
+                      {s.cta}
                     </Link>
                   </div>
 
                   {/* Image block */}
                   <div className="md:w-1/2 w-full h-64 md:h-full flex items-center justify-center p-6">
-                    <img src={src} alt={`Banner ${i + 1}`} className="max-w-full max-h-full object-contain" />
+                    <img src={s.image} alt={`Banner ${i + 1}`} className="max-w-full max-h-full object-contain" />
                   </div>
                 </div>
               ))}
@@ -75,7 +98,7 @@ export default function Banner() {
 
           {/* Dots */}
           <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-30">
-            {images.map((_, i) => (
+            {slides.map((_, i) => (
               <button
                 key={i}
                 onClick={() => goTo(i)}
