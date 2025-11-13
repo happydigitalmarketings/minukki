@@ -29,7 +29,7 @@ export default function ProductPage({ product }) {
 
   function buyNow(){
     addToCart(false);
-    router.push('/checkout');
+    router.push('/cart');
   }
 
   const originalPrice = product.mrp || product.originalPrice || product.oldPrice;
@@ -89,27 +89,18 @@ export default function ProductPage({ product }) {
                 <button onClick={buyNow} className="px-6 py-3 bg-[#25D366] hover:bg-[#1DA851] text-white rounded shadow">Buy Now</button>
               </div>
 
-              <div className="text-sm text-gray-600 mb-4">
+              <div className="text-sm text-gray-600 mb-1">
                 <div className="mb-2">We Accept:</div>
                 <div className="flex gap-2 items-center">
-                  {/* Placeholder icons if available in /public/images/payment */}
-                  <img src="/images/payment/visa.png" alt="visa" className="h-6" onError={(e)=>e.target.style.display='none'} />
-                  <img src="/images/payment/mastercard.png" alt="mc" className="h-6" onError={(e)=>e.target.style.display='none'} />
-                  <img src="/images/payment/razorpay.png" alt="razorpay" className="h-6" onError={(e)=>e.target.style.display='none'} />
+                  <img src="/images/payment/visa.svg" alt="visa" className="h-6" onError={(e)=>e.target.style.display='none'} />
+                  <img src="/images/payment/mastercard.svg" alt="mastercard" className="h-6" onError={(e)=>e.target.style.display='none'} />
+                  <img src="/images/payment/razorpay.svg" alt="razorpay" className="h-6" onError={(e)=>e.target.style.display='none'} />
                 </div>
               </div>
             </div>
 
-            <div className="mt-4 text-sm text-gray-700">
-              <div className="mb-4">
-                <h3 className="font-semibold">Easy 30 days returns and exchanges</h3>
-                <div className="text-gray-500">Eligible</div>
-              </div>
-
-              <div>
-                <h3 className="font-semibold">100% Original Products</h3>
-                <div className="text-gray-500">Haradhi verified</div>
-              </div>
+            <div className="mt-1 text-sm text-gray-700">
+              <div>Share this product:</div>
 
               <div className="flex gap-3 mt-4 items-center">
                 {/* Social share icons */}
