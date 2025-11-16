@@ -20,7 +20,9 @@ export default function EditBlogPost({ user }) {
 
 export async function getServerSideProps({ req }) {
   try {
-    const user = await verifyToken(req);
+    const cookies = req.headers.cookie || '';
+    const token = cookies.split('token=')[1] ? cookies.split('token=')[1].split(';')[0] : null;
+    const user = token ? await verifyToken(token) : null;
     if (!user || !user.isAdmin) {
       return {
         redirect: {

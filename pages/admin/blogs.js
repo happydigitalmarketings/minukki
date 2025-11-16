@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import Head from 'next/head';
+import Link from 'next/link';
 import AdminLayout from '../../components/AdminLayout';
 import { verifyToken } from '../../lib/auth';
 
@@ -355,6 +356,9 @@ export default function AdminBlog({ user }) {
                               {new Date(post.createdAt).toLocaleDateString()}
                             </td>
                             <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                              <Link href={`/admin/blogs/${post.slug || post._id}`} legacyBehavior>
+                                <a className="text-[#8B4513] hover:text-[#703810] mr-4">Edit</a>
+                              </Link>
                               <button
                                 onClick={() => togglePublish(post._id, post.published)}
                                 className="text-[#8B4513] hover:text-[#703810] mr-4"
