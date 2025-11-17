@@ -72,12 +72,6 @@ export default function Header() {
               Contact
             </Link>           
             <Link 
-              href="/admin" 
-              className="text-gray-600 hover:text-[#8B4513] transition-colors border-l pl-6"
-            >
-              Admin
-            </Link>
-            <Link 
               href="/cart" 
               className="flex items-center gap-2 px-4 py-2 bg-[#8B4513] text-white rounded-full hover:bg-[#703810] transition-colors"
             >
@@ -117,9 +111,6 @@ export default function Header() {
             </Link>
             <Link href="/blog" className="block text-gray-600 hover:text-[#8B4513] transition-colors">
               Blog
-            </Link>
-            <Link href="/admin" className="block text-gray-600 hover:text-[#8B4513] transition-colors">
-              Admin
             </Link>
             <Link 
               href="/cart" 

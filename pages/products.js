@@ -32,7 +32,7 @@ export default function Products({ products }) {
         <meta name="description" content="Explore our beautiful collection of traditional and modern sarees" />
       </Head>
 
-      <main className="flex-grow container mx-auto px-4 py-8">
+      <main className="flex-grow container-fluid mx-auto px-4 py-8 bg-[#FDF8F1]">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold mb-4">Our Collections</h1>
           <p className="text-gray-600">Discover our exquisite range of handpicked sarees</p>

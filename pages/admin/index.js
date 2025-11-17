@@ -8,6 +8,15 @@ let Order;
 let Product;
 
 export default function AdminIndex({ user, stats }) {
+  // Ensure stats has default values
+  const safeStats = {
+    totalOrders: stats?.totalOrders || 0,
+    totalProducts: stats?.totalProducts || 0,
+    totalRevenue: stats?.totalRevenue || 0,
+    pendingOrders: stats?.pendingOrders || 0,
+    recentOrders: stats?.recentOrders || [],
+  };
+
   return (
     <AdminLayout user={user}>
       <div className="space-y-6">
@@ -16,10 +25,10 @@ export default function AdminIndex({ user, stats }) {
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {[
-            { label: 'Total Orders', value: stats.totalOrders || 0, icon: 'shopping-bag' },
-            { label: 'Products', value: stats.totalProducts || 0, icon: 'box' },
-            { label: 'Revenue', value: `₹${(stats.totalRevenue || 0).toLocaleString('en-IN')}`, icon: 'dollar-sign' },
-            { label: 'Pending Orders', value: stats.pendingOrders || 0, icon: 'clock' },
+            { label: 'Total Orders', value: safeStats.totalOrders, icon: 'shopping-bag' },
+            { label: 'Products', value: safeStats.totalProducts, icon: 'box' },
+            { label: 'Revenue', value: `₹${(safeStats.totalRevenue || 0).toLocaleString('en-IN')}`, icon: 'dollar-sign' },
+            { label: 'Pending Orders', value: safeStats.pendingOrders, icon: 'clock' },
           ].map((stat, index) => (
             <div key={index} className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
               <div className="flex items-center">
@@ -58,32 +67,40 @@ export default function AdminIndex({ user, stats }) {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {stats.recentOrders.map((order, index) => (
-                  <tr key={order._id}>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      #{(order._id || '').slice(-6).toUpperCase()}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {order?.shippingAddress?.name || 'N/A'}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      ₹{(order?.total || 0).toLocaleString('en-IN')}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                        order?.status === 'completed' ? 'bg-green-100 text-green-800' :
-                        order?.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                        order?.status === 'processing' ? 'bg-blue-100 text-blue-800' :
-                        'bg-red-100 text-red-800'
-                      }`}>
-                        {order?.status || 'N/A'}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {order?.createdAt ? new Date(order.createdAt).toLocaleDateString() : 'N/A'}
+                {safeStats.recentOrders && safeStats.recentOrders.length > 0 ? (
+                  safeStats.recentOrders.map((order) => (
+                    <tr key={order._id}>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                        #{(order._id || '').slice(-6).toUpperCase()}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {order?.shippingAddress?.name || 'N/A'}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ₹{(order?.total || 0).toLocaleString('en-IN')}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                          order?.status === 'completed' ? 'bg-green-100 text-green-800' :
+                          order?.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                          order?.status === 'processing' ? 'bg-blue-100 text-blue-800' :
+                          'bg-red-100 text-red-800'
+                        }`}>
+                          {order?.status || 'N/A'}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {order?.createdAt ? new Date(order.createdAt).toLocaleDateString('en-IN') : 'N/A'}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="5" className="px-6 py-4 text-center text-gray-500">
+                      No orders yet
                     </td>
                   </tr>
-                ))}
+                )}
               </tbody>
             </table>
           </div>

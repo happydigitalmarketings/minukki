@@ -196,7 +196,7 @@ export default function AdminReports({ user }) {
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {new Date(order.createdAt).toLocaleDateString()}
+                          {new Date(order.createdAt).toLocaleDateString('en-IN')}
                         </td>
                       </tr>
                     ))}
@@ -223,8 +223,11 @@ export default function AdminReports({ user }) {
 
 export async function getServerSideProps({ req }) {
   try {
-    const user = await verifyToken(req);
-    if (!user || !user.isAdmin) {
+    const cookies = req.headers.cookie || '';
+    const token = cookies.split('token=')[1] ? cookies.split('token=')[1].split(';')[0] : null;
+    const user = token ? await verifyToken(token) : null;
+    
+    if (!user || user.role !== 'admin') {
       return {
         redirect: {
           destination: '/admin/login',
@@ -232,7 +235,7 @@ export async function getServerSideProps({ req }) {
         },
       };
     }
-    return { props: { user } };
+    return { props: { user: { name: user.name, email: user.email } } };
   } catch (err) {
     return {
       redirect: {

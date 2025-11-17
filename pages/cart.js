@@ -28,8 +28,8 @@ export default function CartPage(){
               </div>
             ) : (
               <div className="bg-white rounded-lg shadow overflow-hidden">
-                {/* Table Header */}
-                <div className="grid grid-cols-12 gap-4 bg-yellow-400 p-4 font-semibold text-white">
+                {/* Table Header - Hidden on mobile */}
+                <div className="hidden md:grid grid-cols-12 gap-4 bg-yellow-400 p-4 font-semibold text-white">
                   <div className="col-span-1"></div>
                   <div className="col-span-5">Product</div>
                   <div className="col-span-2 text-center">Price</div>
@@ -43,69 +43,136 @@ export default function CartPage(){
                     const imgs = item.product.images || [];
                     const itemSubtotal = item.price * item.qty;
                     return (
-                      <div key={item.product._id} className="grid grid-cols-12 gap-4 p-4 items-center hover:bg-gray-50">
-                        {/* Remove Button */}
-                        <div className="col-span-1 flex justify-center">
-                          <button
-                            onClick={() => removeIdx(idx)}
-                            title="Remove"
-                            className="text-red-500 hover:text-red-700 transition"
-                          >
+                      <div key={item.product._id} className="p-4">
+                        {/* Desktop View: Grid */}
+                        <div className="hidden md:grid grid-cols-12 gap-4 items-center hover:bg-gray-50">
+                          {/* Remove Button */}
+                          <div className="col-span-1 flex justify-center">
+                            <button
+                              onClick={() => removeIdx(idx)}
+                              title="Remove"
+                              className="text-red-500 hover:text-red-700 transition"
+                            >
                            <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                          </button>
-                        </div>
-
-                        {/* Product Column */}
-                        <div className="col-span-5 flex items-center gap-3">
-                          <div className="w-16 h-16 bg-gray-100 rounded flex items-center justify-center flex-shrink-0">
-                            {imgs[0] ? (
-                              <img src={imgs[0]} alt={item.product.title} className="w-full h-full object-cover rounded" />
-                            ) : (
-                              <div className="text-gray-300 text-xs">No Image</div>
-                            )}
-                          </div>
-                          <div>
-                            <div className="font-medium text-gray-900">{item.product.title}</div>
-                            {item.product.subtitle && <div className="text-xs text-gray-500">{item.product.subtitle}</div>}
-                          </div>
-                        </div>
-
-                        {/* Price Column */}
-                        <div className="col-span-2 text-center">
-                          <div className="font-semibold text-gray-900">₹{item.price}</div>
-                        </div>
-
-                        {/* Quantity Column */}
-                        <div className="col-span-2 flex items-center justify-center">
-                          <div className="flex items-center border border-gray-300 rounded overflow-hidden">
-                            <button
-                              onClick={() => changeQty(idx, Math.max(1, item.qty - 1))}
-                              className="px-2 py-1 text-gray-700 hover:bg-gray-100 font-medium"
-                              aria-label="Decrease quantity"
-                            >
-                              −
-                            </button>
-                            <input
-                              type="number"
-                              min="1"
-                              value={item.qty}
-                              onChange={e => changeQty(idx, Math.max(1, Number(e.target.value) || 1))}
-                              className="w-12 text-center border-l border-r border-gray-300 outline-none px-1 py-1"
-                              aria-label="Quantity"
-                            />
-                            <button
-                              onClick={() => changeQty(idx, item.qty + 1)}
-                              className="px-2 py-1 text-gray-700 hover:bg-gray-100 font-medium"
-                              aria-label="Increase quantity"
-                            >
-                              +
                             </button>
                           </div>
+
+                          {/* Product Column */}
+                          <div className="col-span-5 flex items-center gap-3">
+                            <div className="w-16 h-16 bg-gray-100 rounded flex items-center justify-center flex-shrink-0">
+                              {imgs[0] ? (
+                                <img src={imgs[0]} alt={item.product.title} className="w-full h-full object-cover rounded" />
+                              ) : (
+                                <div className="text-gray-300 text-xs">No Image</div>
+                              )}
+                            </div>
+                            <div>
+                              <div className="font-medium text-gray-900">{item.product.title}</div>
+                              {item.product.subtitle && <div className="text-xs text-gray-500">{item.product.subtitle}</div>}
+                            </div>
+                          </div>
+
+                          {/* Price Column */}
+                          <div className="col-span-2 text-center">
+                            <div className="font-semibold text-gray-900">₹{item.price.toLocaleString('en-IN')}</div>
+                          </div>
+
+                          {/* Quantity Column */}
+                          <div className="col-span-2 flex items-center justify-center">
+                            <div className="flex items-center border border-gray-300 rounded overflow-hidden">
+                              <button
+                                onClick={() => changeQty(idx, Math.max(1, item.qty - 1))}
+                                className="px-2 py-1 text-gray-700 hover:bg-gray-100 font-medium"
+                                aria-label="Decrease quantity"
+                              >
+                                −
+                              </button>
+                              <input
+                                type="number"
+                                min="1"
+                                value={item.qty}
+                                onChange={e => changeQty(idx, Math.max(1, Number(e.target.value) || 1))}
+                                className="w-12 text-center border-l border-r border-gray-300 outline-none px-1 py-1"
+                                aria-label="Quantity"
+                              />
+                              <button
+                                onClick={() => changeQty(idx, item.qty + 1)}
+                                className="px-2 py-1 text-gray-700 hover:bg-gray-100 font-medium"
+                                aria-label="Increase quantity"
+                              >
+                                +
+                              </button>
+                            </div>
+                          </div>
+
+                          {/* Subtotal Column */}
+                          <div className="col-span-2 text-center">
+                            <div className="font-bold text-gray-900">₹{itemSubtotal.toLocaleString('en-IN')}</div>
+                          </div>
                         </div>
 
-                        {/* Subtotal Column */}
-                        <div className="col-span-2 text-center">
-                          <div className="font-bold text-gray-900">₹{itemSubtotal}</div>
+                        {/* Mobile View: Card Layout */}
+                        <div className="md:hidden space-y-3">
+                          <div className="flex gap-3">
+                            {/* Product Image & Info */}
+                            <div className="flex-1">
+                              <div className="w-20 h-20 bg-gray-100 rounded flex items-center justify-center flex-shrink-0 mb-2">
+                                {imgs[0] ? (
+                                  <img src={imgs[0]} alt={item.product.title} className="w-full h-full object-cover rounded" />
+                                ) : (
+                                  <div className="text-gray-300 text-xs">No Image</div>
+                                )}
+                              </div>
+                              <div className="font-medium text-gray-900 text-sm">{item.product.title}</div>
+                              {item.product.subtitle && <div className="text-xs text-gray-500">{item.product.subtitle}</div>}
+                            </div>
+                            {/* Remove Button */}
+                            <div className="flex justify-start pt-1">
+                              <button
+                                onClick={() => removeIdx(idx)}
+                                title="Remove"
+                                className="text-red-500 hover:text-red-700 transition"
+                              >
+                               <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg>
+                              </button>
+                            </div>
+                          </div>
+
+                          {/* Price, Qty, Subtotal */}
+                          <div className="grid grid-cols-3 gap-2 text-sm">
+                            <div>
+                              <p className="text-gray-600 font-semibold">Price</p>
+                              <p className="font-bold text-gray-900">₹{item.price.toLocaleString('en-IN')}</p>
+                            </div>
+                            <div>
+                              <p className="text-gray-600 font-semibold">Qty</p>
+                              <div className="flex items-center justify-center border border-gray-300 rounded">
+                                <button
+                                  onClick={() => changeQty(idx, Math.max(1, item.qty - 1))}
+                                  className="px-1.5 py-0.5 text-gray-700 hover:bg-gray-100 font-medium text-sm"
+                                >
+                                  −
+                                </button>
+                                <input
+                                  type="number"
+                                  min="1"
+                                  value={item.qty}
+                                  onChange={e => changeQty(idx, Math.max(1, Number(e.target.value) || 1))}
+                                  className="w-8 text-center border-l border-r border-gray-300 outline-none px-0.5 py-0.5 text-sm"
+                                />
+                                <button
+                                  onClick={() => changeQty(idx, item.qty + 1)}
+                                  className="px-1.5 py-0.5 text-gray-700 hover:bg-gray-100 font-medium text-sm"
+                                >
+                                  +
+                                </button>
+                              </div>
+                            </div>
+                            <div>
+                              <p className="text-gray-600 font-semibold">Subtotal</p>
+                              <p className="font-bold text-gray-900">₹{itemSubtotal.toLocaleString('en-IN')}</p>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     );
