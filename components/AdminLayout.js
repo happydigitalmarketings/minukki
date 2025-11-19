@@ -21,7 +21,7 @@ export default function AdminLayout({ children, user }) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen flex flex-col bg-[#FDF8F1]">
       {/* Top Navigation Bar */}
       <nav className="bg-white shadow-sm sticky top-0 z-40">
         <div className="px-4 sm:px-6 lg:px-8">

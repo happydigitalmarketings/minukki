@@ -15,7 +15,7 @@ export default function CartPage(){
   const discount = 0;
 
   return (
-    <div className="bg-gray-100 min-h-screen py-8">
+    <div className="min-h-screen py-8 bg-[#FDF8F1]">
       <main className="max-w-7xl mx-auto px-4">
         <h1 className="text-3xl font-bold mb-8 text-center">Shopping Cart</h1>
         

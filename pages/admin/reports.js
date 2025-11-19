@@ -39,7 +39,7 @@ export default function AdminReports({ user }) {
         <title>Sales Reports | Minukki Admin</title>
       </Head>
 
-      <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+      <div className="mx-auto py-6 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="md:flex md:items-center md:justify-between mb-8">
           <div className="flex-1 min-w-0">
