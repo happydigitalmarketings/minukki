@@ -17,6 +17,10 @@ export default function ProductPage({ product }) {
   const router = useRouter();
   if (router.isFallback) return <div>Loading...</div>;
 
+  if (!product) {
+  return <div>Loading...</div>;
+}
+
   const imgs = product.images || [];
   const [selected, setSelected] = useState(imgs[0] || null);
   const [qty, setQty] = useState(1);
