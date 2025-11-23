@@ -3,24 +3,27 @@ import Head from 'next/head';
 import { useState, useEffect } from 'react';
 
 export default function ProductPage({ product }) {
+    const router = useRouter();
+    if (router.isFallback || !product) {
+    return <div>Loading...</div>;
+  }
     const [related, setRelated] = useState([]);
+
+ 
 
     useEffect(() => {
       // Fetch other products for 'You might also like' section
-     if (!product?._id) return;
+     if (!product || !product._id) return;
+
       fetch('/api/products')
         .then(r => r.json())
         .then(d => {
           // Exclude current product
           setRelated(d.filter(p => p._id !== product._id).slice(0, 8));
         });
-    }, [product._id]);
-  const router = useRouter();
-  if (router.isFallback) return <div>Loading...</div>;
+    }, [product]);
+ 
 
-  if (!product) {
-  return <div>Loading...</div>;
-}
 
   const imgs = product.images || [];
   const [selected, setSelected] = useState(imgs[0] || null);
