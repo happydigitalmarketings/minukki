@@ -156,9 +156,13 @@ export default function AdminProducts({ user }) {
                     <div className="flex-1 min-w-0">
                       <h3 className="text-base sm:text-lg font-medium text-gray-900 truncate">{product.title}</h3>
                       <div className="mt-1 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs sm:text-sm text-gray-600">
-                        <span className="font-medium">₹{product.price.toLocaleString('en-IN')}</span>
+                        <span className="font-medium">
+                          {product.mrp ? (
+                            <span className="text-gray-400 line-through mr-2">₹{product.mrp.toLocaleString('en-IN')}</span>
+                          ) : null}
+                          <span className="text-[#8B4513] font-bold">₹{product.price.toLocaleString('en-IN')}</span>
+                        </span>
                         <span className="hidden sm:inline">•</span>
-                        <span>Stock: {product.stock}</span>
                         {product.categories && (
                           <>
                             <span className="hidden sm:inline">•</span>

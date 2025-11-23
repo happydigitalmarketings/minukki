@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 export default function ProductEdit() {
   const router = useRouter();
   const { id } = router.query;
-  const [data, setData] = useState({ title: '', slug: '', description: '', price: 0, stock: 0, images: [], categories: [] });
+  const [data, setData] = useState({ title: '', slug: '', description: '', price: 0, mrp: 0, stock: 0, images: [], categories: [] });
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
   const [categoriesLoading, setCategoriesLoading] = useState(true);
@@ -191,7 +191,22 @@ export default function ProductEdit() {
 
           <div className="grid grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-900">Price</label>
+              <label className="block text-sm font-medium text-gray-900">MRP Price</label>
+              <div className="mt-1 relative">
+                <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">₹</span>
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  className="block w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 pl-7 text-gray-900 placeholder-gray-400 focus:border-[#8B4513] focus:outline-none focus:ring-1 focus:ring-[#8B4513]"
+                  value={data.mrp}
+                  onChange={e => setData({ ...data, mrp: Number(e.target.value) })}
+                  required
+                />
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-900">Offer Price</label>
               <div className="mt-1 relative">
                 <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">₹</span>
                 <input
@@ -204,17 +219,6 @@ export default function ProductEdit() {
                   required
                 />
               </div>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-900">Stock</label>
-              <input
-                type="number"
-                min="0"
-                className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-[#8B4513] focus:outline-none focus:ring-1 focus:ring-[#8B4513]"
-                value={data.stock}
-                onChange={e => setData({ ...data, stock: Number(e.target.value) })}
-                required
-              />
             </div>
           </div>
 
