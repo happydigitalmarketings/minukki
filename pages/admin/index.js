@@ -12,6 +12,7 @@ export default function AdminIndex({ user, stats }) {
   const safeStats = {
     totalOrders: stats?.totalOrders || 0,
     totalProducts: stats?.totalProducts || 0,
+    completedOrders: stats?.completedOrders || 0,
     totalRevenue: stats?.totalRevenue || 0,
     pendingOrders: stats?.pendingOrders || 0,
     recentOrders: stats?.recentOrders || [],
@@ -28,7 +29,7 @@ export default function AdminIndex({ user, stats }) {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {[
             { label: 'Total Orders', value: safeStats.totalOrders, icon: 'shopping-bag' },
-            { label: 'Completed Orders', value: safeStats.totalProducts, icon: 'box' },
+            { label: 'Completed Orders', value: safeStats.completedOrders, icon: 'box' },
             { label: 'Revenue', value: `₹${(safeStats.totalRevenue || 0).toLocaleString('en-IN')}`, icon: 'dollar-sign' },
             { label: 'Pending Orders', value: safeStats.pendingOrders, icon: 'clock' },
           ].map((stat, index) => (
@@ -137,6 +138,7 @@ export async function getServerSideProps({ req }) {
 
   let totalOrders = 0;
   let totalProducts = 0;
+  let completedOrdersCount = 0;
   let recentOrders = [];
   let pendingOrdersCount = 0;
   let totalRevenue = 0;
@@ -154,6 +156,7 @@ export async function getServerSideProps({ req }) {
       totalProducts,
       recentOrders,
       pendingOrdersCount,
+      completedOrdersCount,
       totalRevenue
     ] = await Promise.all([
       Order.countDocuments(),
@@ -164,6 +167,7 @@ export async function getServerSideProps({ req }) {
         .select('_id total status createdAt shippingAddress')
         .lean(),
       Order.countDocuments({ status: 'pending' }),
+      Order.countDocuments({ status: 'completed' }),
       Order.aggregate([
         { $match: { status: 'completed' } },
         { $group: { _id: null, total: { $sum: '$total' } } }
@@ -179,6 +183,7 @@ export async function getServerSideProps({ req }) {
       stats: {
         totalOrders,
         totalProducts,
+        completedOrders: completedOrdersCount,
         totalRevenue,
         pendingOrders: pendingOrdersCount,
         recentOrders: JSON.parse(JSON.stringify(recentOrders))
