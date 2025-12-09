@@ -164,10 +164,10 @@ export default function ContactPage() {
               {/* Address */}
               <div>
                 <h3 className="text-lg font-medium text-[#8B4513] mb-2">Our Location</h3>
-                <div className="text-gray-600 space-y-2">
-                  <p>123 Saree Street</p>
-                  <p>Kerala Fashion District</p>
-                  <p>Kerala, India 682001</p>
+                <div className="text-gray-600 space-y-2">         
+                  <p>334B Indra colony</p>
+                  <p>S Ramalingapuram </p>
+                  <p>Rajapalayam,India 626102</p>
                 </div>
               </div>
 

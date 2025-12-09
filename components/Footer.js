@@ -51,7 +51,7 @@ export default function Footer() {
             <ul className="space-y-2 text-gray-400 text-sm">
               <li>Email: heyminukki@gmail.com</li>
               <li>Phone: 91 70948 24932</li>
-              <li>Address: 123 Store Street, City, Country</li>
+              <li>Address: 334B Indra colony,S Ramalingapuram,Rajapalayam-626102</li>
             </ul>
           </div>
 
