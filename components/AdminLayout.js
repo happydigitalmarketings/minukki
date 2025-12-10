@@ -1,12 +1,21 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function AdminLayout({ children, user, activeMenu }) {
   const router = useRouter();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+
+  // Close sidebar when route changes
+  useEffect(() => {
+    const handleRouteChange = () => {
+      setSidebarOpen(false);
+    };
+    router.events.on('routeChangeStart', handleRouteChange);
+    return () => router.events.off('routeChangeStart', handleRouteChange);
+  }, [router]);
 
   const menuItems = [
     { icon: 'grid', label: 'Dashboard', href: '/admin' },
@@ -35,9 +44,9 @@ export default function AdminLayout({ children, user, activeMenu }) {
 
       {/* Sidebar */}
       <div
-        className={`$${
+        className={`${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        } md:translate-x-0 fixed md:relative w-64 h-screen bg-white shadow-lg transition-transform duration-300 ease-in-out z-30 flex flex-col`}
+        } md:translate-x-0 fixed md:relative w-64 h-screen bg-white shadow-lg transition-transform duration-300 ease-in-out z-30 flex flex-col md:shadow-none`}
       >
         {/* Logo */}
         <div className="px-6 py-6 border-b border-gray-200">
@@ -57,11 +66,13 @@ export default function AdminLayout({ children, user, activeMenu }) {
           {menuItems.map((item) => {
             const isActive = (activeMenu && activeMenu === item.href) || router.pathname === item.href;
             return (
-              <Link
+              <div
                 key={item.href}
-                href={item.href}
-                onClick={handleNavClick}
-                className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+                onClick={() => {
+                  setSidebarOpen(false);
+                  router.push(item.href);
+                }}
+                className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
                   isActive
                     ? 'bg-[#8B4513] text-white'
                     : 'text-gray-600 hover:bg-gray-100'
@@ -87,7 +98,7 @@ export default function AdminLayout({ children, user, activeMenu }) {
                     0
                   </span>
                 )}
-              </Link>
+              </div>
             );
           })}
         </nav>     
