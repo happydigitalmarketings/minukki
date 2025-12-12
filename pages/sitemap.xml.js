@@ -79,6 +79,9 @@ function generateSiteMap(products, categories) {
 
 export async function getServerSideProps({ res }) {
   try {
+    // IMPORTANT - connect to MongoDB
+    await connectDB();
+
     const products = await Product.find({}, { slug: 1, updatedAt: 1 }).lean();
     const categories = await Category.find({}, { name: 1 }).lean();
 
@@ -112,6 +115,7 @@ export async function getServerSideProps({ res }) {
     return { props: {} };
   }
 }
+
 
 export default function Sitemap() {
   return null;
