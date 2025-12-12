@@ -1,7 +1,6 @@
+
 import { v2 as cloudinary } from "cloudinary";
-import { IncomingForm } from "formidable";
-import fs from "fs";
-import path from "path";
+import formidable from "formidable";
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -21,26 +20,39 @@ export default async function handler(req, res) {
     return res.status(405).json({ message: "Method not allowed" });
   }
 
-  const tmpDir = path.join(process.cwd(), "tmp");
-  if (!fs.existsSync(tmpDir)) fs.mkdirSync(tmpDir, { recursive: true });
-
   try {
-    const form = new IncomingForm({
-      uploadDir: tmpDir,
+    const form = new formidable.IncomingForm({
+      multiples: false,
       keepExtensions: true,
+      maxFileSize: 10 * 1024 * 1024, // 10MB
+      fileWriteStreamHandler: () => null, // Prevent writing to disk
     });
 
-    // ✅ WAIT for file parsing
-    const files = await new Promise((resolve, reject) => {
-      form.parse(req, (err, fields, files) => {
+    let fileBuffer = Buffer.alloc(0);
+    let fileInfo = null;
+
+    form.on("fileBegin", (name, file) => {
+      fileInfo = file;
+    });
+
+    form.on("data", (data) => {
+      if (data && data.name === "file" && data.value) {
+        fileBuffer = Buffer.concat([fileBuffer, data.value]);
+      }
+    });
+
+    // Parse the form
+    await new Promise((resolve, reject) => {
+      form.parse(req, (err) => {
         if (err) reject(err);
-        else resolve(files);
+        else resolve();
       });
     });
 
-    const file = files.file[0];
-    const fileBuffer = fs.readFileSync(file.filepath);
-    
+    if (!fileBuffer.length) {
+      return res.status(400).json({ message: "No file uploaded" });
+    }
+
     // Determine folder based on query parameter
     const folder = req.query.type === 'banner' ? 'minikki/banners' : 'minikki/products';
 
@@ -57,8 +69,6 @@ export default async function handler(req, res) {
       );
       stream.end(fileBuffer);
     });
-
-    fs.unlinkSync(file.filepath); // cleanup
 
     return res.status(200).json({ url: result.secure_url });
   } catch (error) {
