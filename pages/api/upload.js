@@ -29,28 +29,27 @@ export default async function handler(req, res) {
       fileWriteStreamHandler: () => null, // Prevent writing to disk
     });
 
-    let fileBuffer = Buffer.alloc(0);
-    let fileInfo = null;
 
-    form.on("fileBegin", (name, file) => {
-      fileInfo = file;
-    });
+    let fileBuffer = null;
 
-    form.on("data", (data) => {
-      if (data && data.name === "file" && data.value) {
-        fileBuffer = Buffer.concat([fileBuffer, data.value]);
-      }
-    });
-
-    // Parse the form
+    // Parse the form and buffer the file in memory
     await new Promise((resolve, reject) => {
+      form.on("file", (field, file) => {
+        const chunks = [];
+        file.on("data", (chunk) => {
+          chunks.push(chunk);
+        });
+        file.on("end", () => {
+          fileBuffer = Buffer.concat(chunks);
+        });
+      });
       form.parse(req, (err) => {
         if (err) reject(err);
         else resolve();
       });
     });
 
-    if (!fileBuffer.length) {
+    if (!fileBuffer || !fileBuffer.length) {
       return res.status(400).json({ message: "No file uploaded" });
     }
 
