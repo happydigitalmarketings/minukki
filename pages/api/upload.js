@@ -1,6 +1,6 @@
 
 import { v2 as cloudinary } from "cloudinary";
-import formidable from "formidable";
+import busboy from "busboy";
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -21,61 +21,53 @@ export default async function handler(req, res) {
   }
 
   try {
+    const bb = busboy({ headers: req.headers });
+    let uploadDone = false;
 
-    const form = formidable({
-      multiples: false,
-      keepExtensions: true,
-      maxFileSize: 10 * 1024 * 1024, // 10MB
-      fileWriteStreamHandler: () => null, // Prevent writing to disk
-    });
+    bb.on("file", (fieldname, file, filename) => {
+      // Determine folder based on query parameter
+      const folder = req.query.type === "banner" ? "minikki/banners" : "minikki/products";
 
-
-    let fileBuffer = null;
-
-
-    // Parse the form and buffer the file in memory, resolving only after file is fully buffered
-    await new Promise((resolve, reject) => {
-      form.on("file", (field, file) => {
-        const chunks = [];
-        file.on("data", (chunk) => {
-          chunks.push(chunk);
-        });
-        file.on("end", () => {
-          fileBuffer = Buffer.concat(chunks);
-          resolve(); // Only resolve after file is fully buffered
-        });
-        file.on("error", (err) => {
-          reject(err);
-        });
-      });
-      form.parse(req, (err) => {
-        if (err) reject(err);
-        // Do not resolve here; wait for file 'end' event
-      });
-    });
-
-    if (!fileBuffer || !fileBuffer.length) {
-      return res.status(400).json({ message: "No file uploaded" });
-    }
-
-    // Determine folder based on query parameter
-    const folder = req.query.type === 'banner' ? 'minikki/banners' : 'minikki/products';
-
-    const result = await new Promise((resolve, reject) => {
-      const stream = cloudinary.uploader.upload_stream(
+      const uploadStream = cloudinary.uploader.upload_stream(
         {
           folder: folder,
           resource_type: "auto",
         },
         (error, result) => {
-          if (error) reject(error);
-          else resolve(result);
+          if (error) {
+            console.error("Cloudinary upload error:", error);
+            if (!uploadDone) {
+              uploadDone = true;
+              return res.status(500).json({ message: "Upload failed", error: error.message });
+            }
+          } else {
+            uploadDone = true;
+            return res.status(200).json({ url: result.secure_url });
+          }
         }
       );
-      stream.end(fileBuffer);
+
+      // Pipe the file stream directly to Cloudinary
+      file.pipe(uploadStream);
+
+      file.on("error", (err) => {
+        console.error("File stream error:", err);
+        if (!uploadDone) {
+          uploadDone = true;
+          return res.status(400).json({ message: "File error", error: err.message });
+        }
+      });
     });
 
-    return res.status(200).json({ url: result.secure_url });
+    bb.on("error", (err) => {
+      console.error("Form parse error:", err);
+      if (!uploadDone) {
+        uploadDone = true;
+        return res.status(400).json({ message: "Parse error", error: err.message });
+      }
+    });
+
+    req.pipe(bb);
   } catch (error) {
     console.error("Upload error:", error);
     return res.status(500).json({ message: "Upload failed", error: error.message });
