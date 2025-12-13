@@ -51,14 +51,7 @@ export default function ProductCard({product}) {
           </h3>
 
           {/* Attributes */}
-          <div className="space-y-1 mb-3">
-            <p className="text-sm text-gray-600">
-              {product.attributes?.material} • {product.attributes?.color}
-            </p>
-            {product.attributes?.pattern && (
-              <p className="text-sm text-gray-500">Pattern: {product.attributes.pattern}</p>
-            )}
-          </div>
+        
 
           {/* Price */}
           <div className="flex items-center justify-between mt-4">
